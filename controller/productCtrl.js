@@ -18,32 +18,81 @@ const createProduct =  asyncHandler(async (req,res) => {
     }
 });
 
+// const updateProduct = asyncHandler(async (req, res) => {
+//     const id = req.params;
+//     validateMongoDbId(id);
+//     try {
+//       if (req.body.name) {
+//         req.body.slug = slugify(req.body.name);
+//       }
+//       const updatedProduct = await Product.findOneAndUpdate({ id }, req.body, {
+//         new: true,
+//       });
+//       res.json(updatedProduct);
+//     } catch (error) {
+//       throw new Error(error);
+//     }
+//   });
+
+//update a product
 const updateProduct = asyncHandler(async (req, res) => {
-    const id = req.params;
-    validateMongoDbId(id);
+    const { id } = req.params; // Destructure id from params
+    validateMongoDbId(id); // Validate if id is a valid MongoDB ObjectId
+  
     try {
-      if (req.body.name) {
-        req.body.slug = slugify(req.body.name);
+      const { name } = req.body;
+  
+      // If name is provided, update the slug
+      if (name) {
+        req.body.slug = slugify(name);
       }
-      const updateaProduct = await Product.findOneAndUpdate({ id }, req.body, {
+  
+      // Use findByIdAndUpdate instead of findOneAndUpdate
+      const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
         new: true,
       });
-      res.json(updateaProduct);
+  
+      // Check if product was found and updated
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+  
+      res.json(updatedProduct);
     } catch (error) {
       throw new Error(error);
     }
   });
 
   const deleteProduct = asyncHandler(async (req, res) => {
-    const id = req.params;
-    validateMongoDbId(id);
+    const { id } = req.params; // Destructure id from params
+    validateMongoDbId(id); // Validate if id is a valid MongoDB ObjectId
     try {
-      const deleteaProduct = await Product.findOneAndDelete(id);
-      res.json(deleteaProduct);
+      // Use findByIdAndDelete to delete by _id
+      const deletedProduct = await Product.findByIdAndDelete(id);
+  
+      // Check if product was found and deleted
+      if (!deletedProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+  
+      res.json(deletedProduct);
     } catch (error) {
       throw new Error(error);
     }
   });
+  
+  
+
+//    const deleteProduct = asyncHandler(async (req, res) => {
+//     const id = req.params;
+//     validateMongoDbId(id);
+//     try {
+//       const deletedProduct = await Product.findOneAndDelete(id);
+//       res.json(deletedProduct);
+//     } catch (error) {
+//       throw new Error(error);
+//     }
+//   });
 
 const getaProduct =  asyncHandler(async (req,res) => {
     const {id} = req.params;
