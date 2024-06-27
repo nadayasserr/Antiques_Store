@@ -40,14 +40,13 @@ var productSchema = new mongoose.Schema({
     //     ref: "Category",
     //     required:true,
     // },
-    quantity: Number,
+    quantity: {
+        type: Number,
+        default: 1,
+    },
     sold: {
         type: Number,
         default: 0,
-    },
-    description:{
-        type: String,
-        required:true,
     },
     price:{
         type: Number,
